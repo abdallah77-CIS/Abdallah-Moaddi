@@ -18,6 +18,7 @@ const snippets = [
 using namespace std;
 
 int main() {
+   
     cout << "Hello, JU!" << endl;
     return 0;
 }`,
@@ -25,6 +26,7 @@ int main() {
 <span class="tok-kw">using</span> <span class="tok-kw">namespace</span> std;
 
 <span class="tok-kw">int</span> main() {
+    <span class="tok-comment">// من المنطق...</span>
     cout &lt;&lt; <span class="tok-str">"Hello, JU!"</span> &lt;&lt; endl;
     <span class="tok-kw">return</span> 0;
 }`
@@ -33,11 +35,13 @@ int main() {
     tabId: 'tabJava',
     raw: `public class Main {
     public static void main(String[] args) {
+      
         System.out.println("Hello, JU!");
     }
 }`,
     html: `<span class="tok-kw">public</span> <span class="tok-kw">class</span> Main {
     <span class="tok-kw">public</span> <span class="tok-kw">static</span> <span class="tok-kw">void</span> main(<span class="tok-kw">String</span>[] args) {
+        <span class="tok-comment"></span>
         System.out.println(<span class="tok-str">"Hello, JU!"</span>);
     }
 }`
@@ -411,6 +415,37 @@ function closeCertificate() {
 certClose.addEventListener('click', closeCertificate);
 certModalOverlay.addEventListener('click', (e) => { if (e.target === certModalOverlay) closeCertificate(); });
 certPrintBtn.addEventListener('click', () => window.print());
+
+/* ---------- Download certificate as an image (PNG) ---------- */
+const certDownloadImgBtn = document.getElementById('certDownloadImgBtn');
+if (certDownloadImgBtn) {
+  certDownloadImgBtn.addEventListener('click', () => {
+    const certEl = certPrintArea.querySelector('.certificate');
+    if (!certEl || typeof html2canvas !== 'function') return;
+
+    const originalLabel = certDownloadImgBtn.textContent;
+    certDownloadImgBtn.disabled = true;
+    certDownloadImgBtn.textContent = 'جارٍ التجهيز...';
+
+    html2canvas(certEl, {
+      scale: 2,               // sharper output
+      useCORS: true,
+      backgroundColor: '#ffffff'
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'certificate.png';
+      link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }).catch(() => {
+      alert('تعذّر إنشاء الصورة، يرجى المحاولة مرة أخرى.');
+    }).finally(() => {
+      certDownloadImgBtn.disabled = false;
+      certDownloadImgBtn.textContent = originalLabel;
+    });
+  });
+}
 
 /* ---------- Scroll reveal ---------- */
 const revealEls = document.querySelectorAll('.reveal');
