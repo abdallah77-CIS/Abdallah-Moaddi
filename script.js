@@ -371,11 +371,21 @@ studentNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') con
 const certModalOverlay = document.getElementById('certModalOverlay');
 const certPrintArea = document.getElementById('certPrintArea');
 const certClose = document.getElementById('certClose');
-const certPrintBtn = document.getElementById('certPrintBtn');
+const certDownloadImgBtn = document.getElementById('certDownloadImgBtn');
+
+// Keep the data behind the currently-open certificate around so the
+// download button can (re)draw it on demand.
+let currentCertCourse = null;
+let currentCertName = null;
+let currentCertDate = null;
 
 // escapeHtml() and formatArabicDate() now live in common.js.
 function openCertificate(course, name) {
   const today = formatArabicDate(new Date());
+  currentCertCourse = course;
+  currentCertName = name;
+  currentCertDate = today;
+
   certPrintArea.innerHTML = `
     <div class="certificate">
       <div class="cert-inner">
@@ -414,26 +424,179 @@ function closeCertificate() {
 }
 certClose.addEventListener('click', closeCertificate);
 certModalOverlay.addEventListener('click', (e) => { if (e.target === certModalOverlay) closeCertificate(); });
-certPrintBtn.addEventListener('click', () => window.print());
 
-/* ---------- Download certificate as an image (PNG) ---------- */
-const certDownloadImgBtn = document.getElementById('certDownloadImgBtn');
+/* ================================================================
+   Download certificate as an image (PNG)
+   Drawn straight onto a <canvas> (no external library, no CORS/
+   font-loading dependency on a CDN) so it always works offline too.
+   ================================================================ */
+function roundedRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// Wraps `text` (space-separated, works fine for Arabic) to `maxWidth`,
+// drawing each line centered on `x` starting at `y`. Returns the y
+// position right after the last line.
+function wrapCenteredText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  let curY = y;
+  for (let i = 0; i < words.length; i++) {
+    const testLine = line ? line + ' ' + words[i] : words[i];
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      ctx.fillText(line, x, curY);
+      line = words[i];
+      curY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) { ctx.fillText(line, x, curY); curY += lineHeight; }
+  return curY;
+}
+
+function drawCertificateCanvas(course, name, dateStr) {
+  const W = 1000, H = 620, SCALE = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = W * SCALE;
+  canvas.height = H * SCALE;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+  ctx.direction = 'rtl';
+
+  const inkColor = '#E8EEF2';
+  const mutedColor = '#9FB0BC';
+  const dimColor = '#5C6B78';
+  const keyword = '#67E8DB';
+  const arabicFont = (weight, size) => `${weight} ${size}px "IBM Plex Sans Arabic", "Segoe UI", sans-serif`;
+  const monoFont = (weight, size) => `${weight} ${size}px "IBM Plex Mono", monospace`;
+
+  // background
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#131F2C');
+  bg.addColorStop(1, '#070C13');
+  ctx.fillStyle = bg;
+  roundedRectPath(ctx, 0, 0, W, H, 22);
+  ctx.fill();
+
+  // faint dot grid
+  ctx.fillStyle = 'rgba(163, 191, 206, 0.10)';
+  for (let gx = 24; gx < W - 20; gx += 22) {
+    for (let gy = 24; gy < H - 20; gy += 22) {
+      ctx.beginPath();
+      ctx.arc(gx, gy, 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // outer + inner borders
+  ctx.strokeStyle = 'rgba(163, 191, 206, 0.24)';
+  ctx.lineWidth = 1;
+  roundedRectPath(ctx, 0.5, 0.5, W - 1, H - 1, 22);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(103, 232, 219, 0.28)';
+  roundedRectPath(ctx, 16, 16, W - 32, H - 32, 14);
+  ctx.stroke();
+
+  const cx = W / 2;
+  let y = 96;
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = keyword;
+  ctx.font = monoFont(600, 13);
+  ctx.fillText('CERTIFICATE OF COMPLETION', cx, y);
+
+  y += 46;
+  ctx.fillStyle = inkColor;
+  ctx.font = arabicFont(700, 30);
+  ctx.fillText('شهادة إتمام الدورة', cx, y);
+
+  y += 38;
+  ctx.fillStyle = mutedColor;
+  ctx.font = arabicFont(400, 15);
+  ctx.fillText('تُمنح هذه الشهادة إلى', cx, y);
+
+  y += 46;
+  ctx.fillStyle = keyword;
+  ctx.font = arabicFont(700, 36);
+  ctx.fillText(name, cx, y);
+
+  y += 42;
+  ctx.fillStyle = mutedColor;
+  ctx.font = arabicFont(400, 15);
+  const bodyText = `تقديراً لإتمامه/إتمامها بنجاح جميع دروس دورة ${courseLabel[course]} وإنهاء كافة الفيديوهات المقررة بنسبة 100%.`;
+  y = wrapCenteredText(ctx, bodyText, cx, y, 640, 24);
+
+  y += 26;
+  ctx.strokeStyle = 'rgba(163, 191, 206, 0.16)';
+  ctx.beginPath();
+  ctx.moveTo(70, y);
+  ctx.lineTo(W - 70, y);
+  ctx.stroke();
+
+  y += 50;
+  ctx.textAlign = 'right';
+  ctx.fillStyle = dimColor;
+  ctx.font = monoFont(600, 10.5);
+  ctx.fillText('الدورة', W - 70, y - 20);
+  ctx.fillStyle = inkColor;
+  ctx.font = monoFont(600, 14);
+  ctx.fillText(courseLabel[course], W - 70, y);
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = dimColor;
+  ctx.font = monoFont(600, 10.5);
+  ctx.fillText('التاريخ', 70, y - 20);
+  ctx.fillStyle = inkColor;
+  ctx.font = monoFont(600, 14);
+  ctx.fillText(dateStr, 70, y);
+
+  // seal
+  const sealY = y - 8;
+  ctx.beginPath();
+  ctx.arc(cx, sealY, 30, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(103, 232, 219, 0.14)';
+  ctx.fill();
+  ctx.strokeStyle = keyword;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = keyword;
+  ctx.textAlign = 'center';
+  ctx.font = '20px sans-serif';
+  ctx.fillText('★', cx, sealY + 7);
+
+  y += 58;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = dimColor;
+  ctx.font = monoFont(400, 11);
+  ctx.fillText('مُصدرة بإشراف Abdallah Moaddi', cx, y);
+
+  return canvas;
+}
+
 if (certDownloadImgBtn) {
   certDownloadImgBtn.addEventListener('click', () => {
-    const certEl = certPrintArea.querySelector('.certificate');
-    if (!certEl || typeof html2canvas !== 'function') return;
+    if (!currentCertCourse || !currentCertName) return;
 
     const originalLabel = certDownloadImgBtn.textContent;
     certDownloadImgBtn.disabled = true;
     certDownloadImgBtn.textContent = 'جارٍ التجهيز...';
 
-    html2canvas(certEl, {
-      scale: 2,               // sharper output
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    }).then(canvas => {
+    // Wait for the page fonts to be ready so the canvas text renders
+    // with the right typeface instead of a fallback font.
+    const fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+
+    fontsReady.then(() => {
+      const canvas = drawCertificateCanvas(currentCertCourse, currentCertName, currentCertDate);
       const link = document.createElement('a');
-      link.download = 'certificate.png';
+      link.download = `certificate-${currentCertCourse}.png`;
       link.href = canvas.toDataURL('image/png');
       document.body.appendChild(link);
       link.click();
