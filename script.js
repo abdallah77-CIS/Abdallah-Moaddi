@@ -400,7 +400,7 @@ function openCertificate(course, name) {
             <div class="value">${today}</div>
           </div>
         </div>
-        <p class="cert-issuer">مُصدرة بإشراف Abdallah Moaddi</p>
+        <p class="cert-issuer"> مُصدرة بإشراف Abdallah Moaddi</p>
       </div>
     </div>`;
 
