@@ -41,6 +41,7 @@ const ALL_LESSONS = [
   { id: "cpp-2", course: "cpp", title: "First program", desc: "", duration: "6:14", youtubeId: "mLllYfwiEFc" },
   { id: "cpp-3", course: "cpp", title: "Data types & variable declaration & initialization", desc: "", duration: "12:59", youtubeId: "i_w47tWS0KQ" },
   { id: "cpp-4", course: "cpp", title: "cin & Mathematical operation", desc: "", duration: "11:09", youtubeId: "9qNpDSLzWoo" },
+  { id: "cpp-5", course: "cpp", title: "Escape sequence & ASCII Code", desc: "", duration: "12:17", youtubeId: "ZB2UqrWHzt8" },
   { id: "java-1", course: "java", title: "Chapter 1", desc: "", duration: "9:32", youtubeId: "tmKuap6YdfE" },
   { id: "java-2", course: "java", title: "Introduction to java application Part 1", desc: "", duration: "29:51", youtubeId: "84fXBgDaP6o" },
   { id: "java-3", course: "java", title: "Introduction to java application Part 2", desc: "", duration: "27:10", youtubeId: "uenZwitpKyE" },
@@ -50,7 +51,7 @@ const ALL_LESSONS = [
   { id: "java-7", course: "java", title: "Classes and Objects", desc: "", duration: "32:11", youtubeId: "Ezh-rNpgelM" },
   { id: "java-8", course: "java", title: "Methods", desc: "", duration: "35:53", youtubeId: "nXSPBKl5Frk" },
   { id: "java-9", course: "java", title: "Revision", desc: "", duration: "50:06", youtubeId: "gTTchHG4O98" },
-  { id: "cpp-5", course: "cpp", title: "Escape sequence & ASCII Code", desc: "", duration: "12:17", youtubeId: "ZB2UqrWHzt8" },
+
 ];
 
 
