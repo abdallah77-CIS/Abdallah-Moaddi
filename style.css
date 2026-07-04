@@ -1,4 +1,4 @@
-    :root {
+:root {
       --void: #070C13;
       --panel: #0E1721;
       --panel-raised: #131F2C;
@@ -1945,6 +1945,7 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+
       position: absolute;
       bottom: 20px;          
       left: 50%;            
@@ -1969,36 +1970,6 @@
       .certificate { padding: 30px 20px; }
       .cert-name { font-size: 26px; }
       .cert-footer { flex-direction: column; align-items: flex-start; }
-    }
-
-    /* ---------- Print styles: certificate only ---------- */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-
-      #certPrintArea, #certPrintArea * {
-        visibility: visible;
-      }
-
-      #certPrintArea {
-        position: absolute;
-        inset: 0;
-        top: 0;
-        left: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-      .cert-actions, .cert-close-row {
-        display: none !important;
-      }
-
-      .certificate {
-        box-shadow: none;
-        border-radius: 0;
-      }
     }
 
     /* ================================================================
