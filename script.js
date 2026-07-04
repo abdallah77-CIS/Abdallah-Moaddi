@@ -18,7 +18,6 @@ const snippets = [
 using namespace std;
 
 int main() {
-   
     cout << "Hello, JU!" << endl;
     return 0;
 }`,
@@ -26,7 +25,6 @@ int main() {
 <span class="tok-kw">using</span> <span class="tok-kw">namespace</span> std;
 
 <span class="tok-kw">int</span> main() {
-    <span class="tok-comment">// من المنطق...</span>
     cout &lt;&lt; <span class="tok-str">"Hello, JU!"</span> &lt;&lt; endl;
     <span class="tok-kw">return</span> 0;
 }`
@@ -35,13 +33,11 @@ int main() {
     tabId: 'tabJava',
     raw: `public class Main {
     public static void main(String[] args) {
-      
         System.out.println("Hello, JU!");
     }
 }`,
     html: `<span class="tok-kw">public</span> <span class="tok-kw">class</span> Main {
     <span class="tok-kw">public</span> <span class="tok-kw">static</span> <span class="tok-kw">void</span> main(<span class="tok-kw">String</span>[] args) {
-        <span class="tok-comment"></span>
         System.out.println(<span class="tok-str">"Hello, JU!"</span>);
     }
 }`
