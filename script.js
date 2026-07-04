@@ -18,7 +18,7 @@ const snippets = [
 using namespace std;
 
 int main() {
-    // من المنطق...
+   
     cout << "Hello, JU!" << endl;
     return 0;
 }`,
@@ -35,13 +35,13 @@ int main() {
     tabId: 'tabJava',
     raw: `public class Main {
     public static void main(String[] args) {
-        // ...إلى السحر
+      
         System.out.println("Hello, JU!");
     }
 }`,
     html: `<span class="tok-kw">public</span> <span class="tok-kw">class</span> Main {
     <span class="tok-kw">public</span> <span class="tok-kw">static</span> <span class="tok-kw">void</span> main(<span class="tok-kw">String</span>[] args) {
-        <span class="tok-comment">// ...إلى السحر</span>
+        <span class="tok-comment"></span>
         System.out.println(<span class="tok-str">"Hello, JU!"</span>);
     }
 }`
@@ -385,7 +385,7 @@ function openCertificate(course, name) {
         <p class="cert-name">${escapeHtml(name)}</p>
         <p class="cert-body-text">
           تقديراً لإتمامه/إتمامها بنجاح جميع دروس <strong>دورة ${courseLabel[course]}</strong>
-          ضمن منصة Abdallah Moaddi التعليمية، وإنهاء كافة الفيديوهات المقررة بنسبة 100%.
+           وإنهاء كافة الفيديوهات المقررة بنسبة 100%.
         </p>
         <div class="cert-footer">
           <div class="cert-footer-block">
@@ -400,7 +400,7 @@ function openCertificate(course, name) {
             <div class="value">${today}</div>
           </div>
         </div>
-        <p class="cert-issuer">مُصدرة عبر منصة Abdallah Moaddi التعليمية — بإشراف Abdallah Moaddi</p>
+        <p class="cert-issuer">مُصدرة Abdallah Moaddi بإشراف Abdallah Moaddi</p>
       </div>
     </div>`;
 
