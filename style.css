@@ -1945,6 +1945,10 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      position: absolute;
+      bottom: 20px;          
+      left: 50%;            
+      transform: translateX(-50%);
     }
 
     .cert-seal svg {
