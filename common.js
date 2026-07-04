@@ -50,6 +50,13 @@ const ALL_LESSONS = [
   { id: "java-7", course: "java", title: "Classes and Objects", desc: "", duration: "32:11", youtubeId: "Ezh-rNpgelM" },
   { id: "java-8", course: "java", title: "Methods", desc: "", duration: "35:53", youtubeId: "nXSPBKl5Frk" },
   { id: "java-9", course: "java", title: "Revision", desc: "", duration: "50:06", youtubeId: "gTTchHG4O98" },
+  { id: "cpp-5", course: "cpp", title: "Escape sequence & ASCII Code", desc: "", duration: "12:17", youtubeId: "ZB2UqrWHzt8" },
+];
+
+const courseLabel = {
+  cpp: "C++",
+  java: "Java"
+};
 ];
 
 const courseLabel = { cpp: 'C++', java: 'Java' };
