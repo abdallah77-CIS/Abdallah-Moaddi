@@ -53,11 +53,7 @@ const ALL_LESSONS = [
   { id: "cpp-5", course: "cpp", title: "Escape sequence & ASCII Code", desc: "", duration: "12:17", youtubeId: "ZB2UqrWHzt8" },
 ];
 
-const courseLabel = {
-  cpp: "C++",
-  java: "Java"
-};
-];
+
 
 const courseLabel = { cpp: 'C++', java: 'Java' };
 
